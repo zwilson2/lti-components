@@ -12,9 +12,17 @@
 	</head>
 	<body>
 		<d2l-demo-page page-title="LtiIframe">
-			<h2>LtiIframe</h2>
+			<h2>LtiIframe no width provided</h2>
 			<d2l-demo-snippet>
-				<d2l-lti-iframe></d2l-lti-iframe>
+				<d2l-lti-iframe lti-launch-url="https://example.com"></d2l-lti-iframe>
+			</d2l-demo-snippet>
+			<h2>LtiIframe with height 300px and width 800px</h2>
+			<d2l-demo-snippet>
+				<d2l-lti-iframe height="300" width="800" lti-launch-url="https://example.com"></d2l-lti-iframe>
+			</d2l-demo-snippet>
+			<h2>LtiIframe with height 500px and width 200px</h2>
+			<d2l-demo-snippet>
+				<d2l-lti-iframe height="500" width="200" lti-launch-url="https://example.com"></d2l-lti-iframe>
 			</d2l-demo-snippet>
 		</d2l-demo-page>
 	</body>
