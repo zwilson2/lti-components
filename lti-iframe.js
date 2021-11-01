@@ -75,6 +75,7 @@ class LtiIFrame extends LitElement {
 			if (params.subject === 'lti.frameResize') {
 				const MAX_FRAME_HEIGHT = 10000;
 				if (!params.height || params.height < 1 || params.height > MAX_FRAME_HEIGHT) {
+					console.warn('Invalid height value received, aborting');
 					return;
 				}
 
