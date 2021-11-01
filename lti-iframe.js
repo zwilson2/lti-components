@@ -57,10 +57,14 @@ class LtiIFrame extends LitElement {
 		return html`<div class="d2l-content-frame">
 		${this.iFrameWidth ?
 		html`<iframe id="lti-iframe-id" class="${classMap(iFrameClasses)}" allow="microphone *; camera *; autoplay *"
-		width="${this.iFrameWidth}px" height="${this.iFrameHeight}px" src="${this._launchUrl}"></iframe>` :
+		width="${this.iFrameWidth}px" height="${this.iFrameHeight}px" src="${this._launchUrl}" title="${this._getTitle()}"></iframe>` :
 		html`<iframe id="lti-iframe-id" class="${classMap(iFrameClasses)}" allow="microphone *; camera *; autoplay *"
-		height="${this.iFrameHeight}px" src="${this._launchUrl}"></iframe>`}
+		height="${this.iFrameHeight}px" src="${this._launchUrl}" title="${this._getTitle()}"></iframe>`}
 </div>`;
+	}
+
+	_getTitle() {
+		return this._launchUrl ? this._launchUrl.slice(this._launchUrl.indexOf('//') + '//'.length) : 'invalid-launch-iframe';
 	}
 
 	_handleMessage(event) {
