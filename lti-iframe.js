@@ -55,10 +55,10 @@ class LtiIFrame extends LitElement {
 	render() {
 		const iFrameClasses = { 'd2l-content-frame-default-width': !this.iFrameWidth, 'no-border': true };
 		return html`<div class="d2l-content-frame">
-		${this.iFrameWidth ? 
-			html`<iframe id="lti-iframe-id" class="${classMap(iFrameClasses)}" allow="microphone *; camera *; autoplay *"
+		${this.iFrameWidth ?
+		html`<iframe id="lti-iframe-id" class="${classMap(iFrameClasses)}" allow="microphone *; camera *; autoplay *"
 		width="${this.iFrameWidth}px" height="${this.iFrameHeight}px" src="${this._launchUrl}"></iframe>` :
-			html`<iframe id="lti-iframe-id" class="${classMap(iFrameClasses)}" allow="microphone *; camera *; autoplay *"
+		html`<iframe id="lti-iframe-id" class="${classMap(iFrameClasses)}" allow="microphone *; camera *; autoplay *"
 		height="${this.iFrameHeight}px" src="${this._launchUrl}"></iframe>`}
 </div>`;
 	}
