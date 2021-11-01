@@ -1,8 +1,8 @@
-# @brightspace-ui/lti-iframe
+# LTI Components
 
 [![NPM version](https://img.shields.io/npm/v/@brightspace-ui/lti-iframe.svg)](https://www.npmjs.org/package/@brightspace-ui/lti-iframe)
 
-A generic LTI launch component
+Contains the LTI launch BSI component
 
 ## Installation
 
@@ -18,22 +18,16 @@ npm install @brightspace-ui/lti-iframe
 <script type="module">
     import '@brightspace-ui/lti-iframe/lti-iframe.js';
 </script>
-<d2l-lti-iframe>My element</d2l-lti-iframe>
+<d2l-lti-iframe height="600" width="600" lti-launch-url="https://example.com"></d2l-lti-iframe>
 ```
 
 **Properties:**
 
 | Property | Type | Description |
 |--|--|--|
-| | | |
-
-**Accessibility:**
-
-To make your usage of `d2l-lti-iframe` accessible, use the following properties when applicable:
-
-| Attribute | Description |
-|--|--|
-| | |
+| 'height' | String, required | The height of the iframe |
+| 'width' | String | The width of the iframe |
+| 'lti-launch-url' | String, required | A string corresponding to the LTI launch URL |
 
 ## Developing, Testing and Contributing
 
