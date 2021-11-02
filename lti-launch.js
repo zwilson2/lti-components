@@ -2,7 +2,7 @@ import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { classMap } from 'lit-html/directives/class-map.js';
 import { heading4Styles } from '@brightspace-ui/core/components/typography/styles.js';
 
-class LtiIFrame extends LitElement {
+class LtiLaunch extends LitElement {
 	static get properties() {
 		return {
 			iFrameWidth: {
@@ -56,9 +56,9 @@ class LtiIFrame extends LitElement {
 		const iFrameClasses = { 'd2l-content-frame-default-width': !this.iFrameWidth, 'no-border': true };
 		return html`<div class="d2l-content-frame">
 		${this.iFrameWidth ?
-		html`<iframe id="lti-iframe-id" class="${classMap(iFrameClasses)}" allow="microphone *; camera *; autoplay *"
+		html`<iframe id="lti-launch-id" class="${classMap(iFrameClasses)}" allow="microphone *; camera *; autoplay *"
 		width="${this.iFrameWidth}px" height="${this.iFrameHeight}px" src="${this._launchUrl}" title="${this._getTitle()}"></iframe>` :
-		html`<iframe id="lti-iframe-id" class="${classMap(iFrameClasses)}" allow="microphone *; camera *; autoplay *"
+		html`<iframe id="lti-launch-id" class="${classMap(iFrameClasses)}" allow="microphone *; camera *; autoplay *"
 		height="${this.iFrameHeight}px" src="${this._launchUrl}" title="${this._getTitle()}"></iframe>`}
 </div>`;
 	}
@@ -100,4 +100,4 @@ class LtiIFrame extends LitElement {
 	}
 }
 
-customElements.define('d2l-lti-iframe', LtiIFrame);
+customElements.define('d2l-lti-launch', LtiLaunch);

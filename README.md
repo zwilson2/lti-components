@@ -16,9 +16,9 @@ npm install @brightspace-ui/lti-iframe
 
 ```html
 <script type="module">
-    import '@brightspace-ui/lti-iframe/lti-iframe.js';
+    import '@brightspace/lti-components/lti-launch.js';
 </script>
-<d2l-lti-iframe height="600" width="600" lti-launch-url="https://example.com"></d2l-lti-iframe>
+<d2l-lti-launch height="600" width="600" lti-launch-url="https://example.com"></d2l-lti-launch>
 ```
 
 **Properties:**
