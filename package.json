@@ -1,5 +1,5 @@
 {
-  "name": "@brightspace/lti-iframe",
+  "name": "@brightspace-ui/lti-iframe",
   "description": "A generic LTI launch component",
   "repository": "https://github.com/Brightspace/lti-components.git",
   "scripts": {
