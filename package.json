@@ -1,11 +1,11 @@
 {
-  "name": "@brightspace-ui/lti-iframe",
+  "name": "d2l-lti-components",
   "description": "A generic LTI launch component",
   "repository": "https://github.com/Brightspace/lti-components.git",
   "scripts": {
     "lint": "npm run lint:eslint && npm run lint:lit && npm run lint:style",
     "lint:eslint": "eslint . --ext .js,.html",
-    "lint:lit": "lit-analyzer lti-iframe.js --strict",
+    "lint:lit": "lit-analyzer lti-launch.js --strict",
     "lint:style": "stylelint \"**/*.js\"",
     "start": "web-dev-server --app-index demo/index.html --node-resolve --open --watch",
     "test": "npm run lint && npm run test:headless",
@@ -31,8 +31,8 @@
     "stylelint": "^13"
   },
   "files": [
-    "lti-iframe.js",
-    "lti-iframe.serge.json",
+    "lti-launch.js",
+    "lti-launch.serge.json",
     "/lang"
   ],
   "publishConfig": {

@@ -1,5 +1,5 @@
 {
-  "name": "lti-iframe",
+  "name": "lti-launch",
   "parser_plugin": {
     "plugin": "parse_js"
   },
