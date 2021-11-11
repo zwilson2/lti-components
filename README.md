@@ -64,8 +64,8 @@ Error: `The browser was unable to create and start a test page after 30000ms. Yo
 
 Update the web-test-runner config file to allow chrome to launch without a sandbox. 
 
-```shell
-<pre><b>import { chromeLauncher } from '@web/test-runner';</b></pre>
+<code>
+**import { chromeLauncher } from '@web/test-runner';**
 
 export default {
 	files: './test/*.test.js',
@@ -76,7 +76,7 @@ export default {
 			timeout: '10000',
 		}
 	},
-	<pre><b>browsers: [chromeLauncher({ launchOptions: { args: ['--no-sandbox'] } })],</b></pre>
+	**browsers: [chromeLauncher({ launchOptions: { args: ['--no-sandbox'] } })],**
 	testRunnerHtml: testFramework =>
 		`<html>
 			<body>
@@ -85,8 +85,7 @@ export default {
 			</body>
 		</html>`
 };
-```
-
+</code>
 
 ### Running the demos
 
