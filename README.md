@@ -56,6 +56,38 @@ npm run test:headless
 npm run test:headless:watch
 ```
 
+#### Test Troubleshooting
+
+##### Timeout
+
+Error: `The browser was unable to create and start a test page after 30000ms. You can increase this timeout with the browserStartTimeout option.`
+
+Update the web-test-runner config file to allow chrome to launch without a sandbox. 
+
+```shell
+<pre><b>import { chromeLauncher } from '@web/test-runner';</b></pre>
+
+export default {
+	files: './test/*.test.js',
+	nodeResolve: true,
+	testFramework: {
+		config: {
+			ui: 'bdd',
+			timeout: '10000',
+		}
+	},
+	<pre><b>browsers: [chromeLauncher({ launchOptions: { args: ['--no-sandbox'] } })],</b></pre>
+	testRunnerHtml: testFramework =>
+		`<html>
+			<body>
+				<script src="node_modules/@brightspace-ui/core/tools/resize-observer-test-error-handler.js"></script>
+				<script type="module" src="${testFramework}"></script>
+			</body>
+		</html>`
+};
+```
+
+
 ### Running the demos
 
 To start a [@web/dev-server](https://modern-web.dev/docs/dev-server/overview/) that hosts the demo page and tests:
