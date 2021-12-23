@@ -23,9 +23,6 @@ class LtiLaunch extends LitElement {
 
 	static get styles() {
 		return [heading4Styles, css`
-			.d2l-content-frame {
-				margin: 1rem 0 0.6rem 0;
-			}
 			.d2l-content-frame-default-width {
 				width: 100%;
 			}
@@ -55,7 +52,7 @@ class LtiLaunch extends LitElement {
 
 	render() {
 		const iFrameClasses = { 'd2l-content-frame-default-width': !this.iFrameWidth, 'no-border': true };
-		return html`<div class="d2l-content-frame">
+		return html`<div>
 		<iframe id="lti-launch-id" class="${classMap(iFrameClasses)}" allow="microphone *; camera *; autoplay *; display-capture *"
 		width="${ifDefined(this.iFrameWidth)}px" height="${this.iFrameHeight}px" src="${this._launchUrl}" title="${this._getTitle()}"></iframe>
 </div>`;
