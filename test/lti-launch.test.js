@@ -24,6 +24,7 @@ describe('d2l-lti-launch', () => {
 		const iframeHeight = '500px';
 		const iframeWidth = '400px';
 		const iframeId = 'lti-launch-id';
+		const iframeTestId = 'lti-launch-frame';
 		const iframeClass = 'no-border';
 		const iframeClassNoWidth = 'd2l-content-frame-default-width no-border';
 		const iframeTitle = 'example.com/';
@@ -32,6 +33,7 @@ describe('d2l-lti-launch', () => {
 			const element = await fixture(html`<d2l-lti-launch height="${height}" width="${width}" lti-launch-url="${launchUrl}"></d2l-lti-launch>`);
 
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('id')).equals(iframeId);
+			expect(element.shadowRoot.querySelector('iframe').getAttribute('data-test-id')).equals(iframeTestId);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('class')).equals(iframeClass);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('src')).equals(launchUrl);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('title')).equals(iframeTitle);
@@ -43,6 +45,7 @@ describe('d2l-lti-launch', () => {
 			const element = await fixture(html`<d2l-lti-launch height="${height}" lti-launch-url="${launchUrl}"></d2l-lti-launch>`);
 
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('id')).equals(iframeId);
+			expect(element.shadowRoot.querySelector('iframe').getAttribute('data-test-id')).equals(iframeTestId);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('class')).equals(iframeClassNoWidth);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('src')).equals(launchUrl);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('title')).equals(iframeTitle);
