@@ -33,6 +33,38 @@ npm install @brightspace-ui/lti-iframe
 
 After cloning the repo, run `npm install` to install dependencies.
 
+### Developing with the BSI (Brightspace Integration)
+To start working with the BSI clone the [repo](https://github.com/Brightspace/brightspace-integration) locally.
+
+#### NPM Linking the lti-activity Component With the BSI
+To get our local changes in lti-components to work in our local BSI we need to set up a local npm link. This will
+have the BSI pull in our local lti-components folder into its NPM modules folder.
+
+The first step is to npm link the lti-components repo, from the repo root run
+```shell
+npm link
+```
+This creates a module in our local npm store.
+Next we need to set up the BSI repo to pull this module from our local npm store. Go to the BSI directory and run
+```shell
+npm link d2l-lti-components
+```
+
+### Running the BSI Locally
+Follow the instructions for [Building & Running a Local BSI](https://github.com/Brightspace/brightspace-integration#building--running-a-local-bsi)
+and follow the development build instructions. You can use the config files method or the config variables method.
+```shell
+npm run start
+```
+
+#### Running the BSI With Sitelord
+You can set up a Sitelord site to use your local BSI by running a ngrok tunnel to where your local BSI is running. Then
+on the sitelord site set the d2l.System.BsiEndpointOverride config variable to your ngrok tunnel. Also set the
+d2l.System.BsiEnvironmentOverride to development.
+```shell
+ngrok http 8080 # or whatever port your local BSI is running on
+```
+
 ### Linting
 
 ```shell
