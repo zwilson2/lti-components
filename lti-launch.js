@@ -1,7 +1,7 @@
 import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { classMap } from 'lit-html/directives/class-map.js';
 import { heading4Styles } from '@brightspace-ui/core/components/typography/styles.js';
-import { ifDefined } from 'lit-html/directives/if-defined';
+import { ifDefined } from 'lit-html/directives/if-defined.js';
 
 class LtiLaunch extends LitElement {
 	static get properties() {
@@ -78,12 +78,14 @@ class LtiLaunch extends LitElement {
 					return;
 				}
 
-				const el = this.shadowRoot.querySelectorAll('iframe');
-				for (let i = 0; i < el.length; i++) {
-					if (el[i].contentWindow === event.source) {
-						this.iFrameHeight = params.height;
-						// eslint-disable-next-line no-console
-						console.info(`Setting iFrame height to ${params.height}`);
+				const el = this.shadowRoot && this.shadowRoot.querySelectorAll('iframe');
+				if (el) {
+					for (let i = 0; i < el.length; i++) {
+						if (el[i].contentWindow === event.source) {
+							this.iFrameHeight = params.height;
+							// eslint-disable-next-line no-console
+							console.info(`Setting iFrame height to ${params.height}`);
+						}
 					}
 				}
 			}
