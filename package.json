@@ -17,7 +17,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7",
     "@brightspace-ui/stylelint-config": "^0.3",
-    "@open-wc/testing": "^2",
+    "@open-wc/testing": "^3",
     "@web/dev-server": "^0.1",
     "@web/test-runner": "^0.13",
     "@web/test-runner-saucelabs": "^0.7",
@@ -40,7 +40,8 @@
   },
   "dependencies": {
     "@brightspace-ui/core": "^1",
-    "lit-element": "^2"
+    "lit-element": "^3",
+    "lit-html": "^2"
   },
   "version": "2.0.4"
 }
