@@ -17,6 +17,10 @@ class LtiLaunch extends LitElement {
 			_launchUrl: {
 				type: String,
 				attribute: 'lti-launch-url'
+			},
+			root: {
+				type: Boolean,
+				attribute: 'root'
 			}
 		};
 	}
@@ -36,10 +40,15 @@ class LtiLaunch extends LitElement {
 		super();
 
 		this.iFrameHeight = 600;
+		this.root = false;
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
+		
+		if (window === window.top && this.root) {
+			window.location.href = this._launchUrl;
+		}
 
 		this._handleMessage = this._handleMessage.bind(this);
 		window.addEventListener('message', this._handleMessage);
