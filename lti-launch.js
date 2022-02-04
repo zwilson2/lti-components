@@ -45,7 +45,7 @@ class LtiLaunch extends LitElement {
 
 	connectedCallback() {
 		super.connectedCallback();
-		
+
 		if (window === window.top && this.root) {
 			window.location.href = this._launchUrl;
 		}
