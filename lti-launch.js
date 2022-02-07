@@ -36,6 +36,7 @@ class LtiLaunch extends LitElement {
 		super();
 
 		this.iFrameHeight = 600;
+		this._ltiStorage = {};
 	}
 
 	connectedCallback() {
@@ -95,25 +96,136 @@ class LtiLaunch extends LitElement {
 			//don't error. new messages are objects and aren't meant to be parsed
 		}
 
-		if (!event.data.message_id || !event.data.subject) {
+		if (!event.data.subject || !event.data.message_id) {
+			//TODO: log error?
 			return;
 		}
 
-		const target_window = event.source;
-
-		if (event.data.subject === 'org.imsglobal.lti.capabilities') {
-			const response = {
+		let response = this._processLtiPostMessage(event);
+		if (response) {
+			response = {
+				subject: event.data.subject + ".response",
 				message_id: event.data.message_id,
-				subject: 'org.imsglobal.lti.capabilities.response',
-				supported_messages: [
-					{ subject: 'org.imsglobal.lti.capabilities' },
-					{ subject: 'org.imsglobal.lti.put_data' },
-					{ subject: 'org.imsglobal.lti.get_data' }
-				]
-			};
-			target_window.postMessage(response, event.origin);
+				...response
+			}
+			event.source.postMessage(response, event.origin);
 		}
 	}
+
+	_processLtiPostMessage(event) {
+
+		const request = event.data;
+
+		if (request.subject === 'org.imsglobal.lti.capabilities') {
+			return this._processLtiPostMessageCapabilities(event);
+		}
+
+		if (request.subject === 'org.imsglobal.lti.put_data') {
+			return this._processLtiPostMessagePutData(event);
+		}
+
+		if (request.subject === 'org.imsglobal.lti.get_data') {
+			return this._processLtiPostMessageGetData(event);
+		}
+
+		return null;
+	}
+
+	_processLtiPostMessageCapabilities(event) {
+		return {
+			supported_messages: [
+				{ subject: 'org.imsglobal.lti.capabilities' },
+				{ subject: 'org.imsglobal.lti.put_data' },
+				{ subject: 'org.imsglobal.lti.get_data' }
+			]
+		};
+	}
+
+	_processLtiPostMessagePutData(event) {
+		const request = event.data;
+
+		if (request.key === null || request.key === undefined) {
+			return {
+				error: {
+					code: 'bad_request',
+					message: `The put_data request is missing the 'key' field.`
+				}
+			};
+		}
+
+		if (!this._ltiStorage[event.origin]) {
+			this._ltiStorage[event.origin] = {};
+		}
+
+		const store = this._ltiStorage[event.origin];
+
+		if (reachedStorageLimit(store)) {
+			//TODO: log error
+
+			return {
+				error: {
+					code: 'storage_exhaustion',
+					message: 'Reached storage limit of 4096 bytes / 500 keys.'
+				}
+			};
+		}
+
+		if (request.value === null || request.value === undefined) {
+			delete store[request.key];
+		} else {
+			store[request.key] = request.value;
+
+			if (reachedStorageLimit(store)) {
+				//TODO: log error
+			}
+		}
+
+		return {
+			key: request.key,
+			value: store[request.key]
+		};
+	}
+
+	_processLtiPostMessageGetData(event) {
+		const request = event.data;
+
+		if (request.key === null || request.key === undefined) {
+			return {
+				error: {
+					code: 'bad_request',
+					message: `The get_data request is missing the 'key' field.`
+				}
+			};
+		}
+
+		const store = this._ltiStorage[event.origin];
+
+		if (!store || !(request.key in store)) {
+			return {
+				error: {
+					code: 'key_not_found',
+					message: `Key not found: ${request.key}`
+				}
+			};
+		}
+
+		const value = store[request.key];
+
+		return {
+			key: request.key,
+			value: value
+		};
+	}
+}
+
+function reachedStorageLimit(store) {
+	return keyValueStoreSize(store) >= 4096 || Object.keys(store).length >= 500;
+}
+
+function keyValueStoreSize(store) {
+	Object.entries(store)
+		.map(([k,v]) => k.length + v.length)
+		.reduce((x, y) => x + y, 0);
 }
 
 customElements.define('d2l-lti-launch', LtiLaunch);
