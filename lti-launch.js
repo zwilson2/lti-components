@@ -94,6 +94,25 @@ class LtiLaunch extends LitElement {
 		catch (exception) {
 			//don't error. new messages are objects and aren't meant to be parsed
 		}
+
+		if (!event.data.message_id || !event.data.subject) {
+			return;
+		}
+
+		const target_window = event.source;
+
+		if (event.data.subject === 'org.imsglobal.lti.capabilities') {
+			const response = {
+				message_id: event.data.message_id,
+				subject: 'org.imsglobal.lti.capabilities.response',
+				supported_messages: [
+					{ subject: 'org.imsglobal.lti.capabilities' },
+					{ subject: 'org.imsglobal.lti.put_data' },
+					{ subject: 'org.imsglobal.lti.get_data' }
+				]
+			};
+			target_window.postMessage(response, event.origin);
+		}
 	}
 }
 
