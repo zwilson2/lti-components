@@ -1,8 +1,8 @@
 import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { classMap } from 'lit-html/directives/class-map.js';
+import { createClient } from '@brightspace-ui/logging';
 import { heading4Styles } from '@brightspace-ui/core/components/typography/styles.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
-import { createClient } from '@brightspace-ui/logging';
 
 const LTI_POSTMESSAGE_SUBJECT_CAPABILITIES = 'org.imsglobal.lti.capabilities';
 const LTI_POSTMESSAGE_SUBJECT_PUTDATA = 'org.imsglobal.lti.put_data';
@@ -110,10 +110,10 @@ class LtiLaunch extends LitElement {
 		let response = this._processLtiPostMessage(event);
 		if (response) {
 			response = {
-				subject: event.data.subject + ".response",
+				subject: `${event.data.subject}.response`,
 				message_id: event.data.message_id,
 				...response
-			}
+			};
 			event.source.postMessage(response, event.origin);
 		}
 	}
@@ -123,72 +123,27 @@ class LtiLaunch extends LitElement {
 		const request = event.data;
 
 		if (request.subject === LTI_POSTMESSAGE_SUBJECT_CAPABILITIES) {
-			return this._processLtiPostMessageCapabilities(event);
-		}
-
-		if (request.subject === LTI_POSTMESSAGE_SUBJECT_PUTDATA) {
-			return this._processLtiPostMessagePutData(event);
+			return this._processLtiPostMessageCapabilities();
 		}
 
 		if (request.subject === LTI_POSTMESSAGE_SUBJECT_GETDATA) {
 			return this._processLtiPostMessageGetData(event);
 		}
 
+		if (request.subject === LTI_POSTMESSAGE_SUBJECT_PUTDATA) {
+			return this._processLtiPostMessagePutData(event);
+		}
+
 		return null;
 	}
 
-	_processLtiPostMessageCapabilities(event) {
+	_processLtiPostMessageCapabilities() {
 		return {
 			supported_messages: [
 				{ subject: LTI_POSTMESSAGE_SUBJECT_CAPABILITIES },
 				{ subject: LTI_POSTMESSAGE_SUBJECT_PUTDATA },
 				{ subject: LTI_POSTMESSAGE_SUBJECT_GETDATA }
 			]
-		};
-	}
-
-	_processLtiPostMessagePutData(event) {
-		const request = event.data;
-
-		if (request.key === null || request.key === undefined) {
-			return {
-				error: {
-					code: 'bad_request',
-					message: `The put_data request is missing the 'key' field.`
-				}
-			};
-		}
-
-		if (!this._ltiStorage[event.origin]) {
-			this._ltiStorage[event.origin] = {};
-		}
-
-		const store = this._ltiStorage[event.origin];
-
-		if (request.value === null || request.value === undefined) {
-			delete store[request.key];
-		} else {
-			if (reachedStorageLimit(store) && additionalStorageRequired(store, request.key, request.value) > 0) {
-				logger.error(null, `${LTI_POSTMESSAGE_SUBJECT_PUTDATA}: reached storage limit`);
-	
-				return {
-					error: {
-						code: 'storage_exhaustion',
-						message: 'Reached storage limit.'
-					}
-				};
-			}
-
-			store[request.key] = request.value;
-
-			if (reachedStorageLimit(store)) {
-				logger.error(null, `${LTI_POSTMESSAGE_SUBJECT_PUTDATA}: reached storage limit`);
-			}
-		}
-
-		return {
-			key: request.key,
-			value: store[request.key]
 		};
 	}
 
@@ -199,7 +154,7 @@ class LtiLaunch extends LitElement {
 			return {
 				error: {
 					code: 'bad_request',
-					message: `The get_data request is missing the 'key' field.`
+					message: 'The get_data request is missing the \'key\' field.'
 				}
 			};
 		}
@@ -223,6 +178,51 @@ class LtiLaunch extends LitElement {
 			value: value
 		};
 	}
+	_processLtiPostMessagePutData(event) {
+		const request = event.data;
+
+		if (request.key === null || request.key === undefined) {
+			return {
+				error: {
+					code: 'bad_request',
+					message: 'The put_data request is missing the \'key\' field.'
+				}
+			};
+		}
+
+		if (!this._ltiStorage[event.origin]) {
+			this._ltiStorage[event.origin] = {};
+		}
+
+		const store = this._ltiStorage[event.origin];
+
+		if (request.value === null || request.value === undefined) {
+			delete store[request.key];
+		} else {
+			if (reachedStorageLimit(store) && additionalStorageRequired(store, request.key, request.value) > 0) {
+				logger.error(null, `${LTI_POSTMESSAGE_SUBJECT_PUTDATA}: reached storage limit`);
+
+				return {
+					error: {
+						code: 'storage_exhaustion',
+						message: 'Reached storage limit.'
+					}
+				};
+			}
+
+			store[request.key] = request.value;
+
+			if (reachedStorageLimit(store)) {
+				logger.error(null, `${LTI_POSTMESSAGE_SUBJECT_PUTDATA}: reached storage limit`);
+			}
+		}
+
+		return {
+			key: request.key,
+			value: store[request.key]
+		};
+	}
+
 }
 
 function ltiStorageLimitFlag() {
@@ -239,7 +239,7 @@ function reachedStorageLimit(store) {
 
 function keyValueStoreSize(store) {
 	return Object.entries(store)
-		.map(([k,v]) => k.length + v.length)
+		.map(([k, v]) => k.length + v.length)
 		.reduce((x, y) => x + y, 0);
 }
 
