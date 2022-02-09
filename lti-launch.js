@@ -2,6 +2,13 @@ import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { classMap } from 'lit-html/directives/class-map.js';
 import { heading4Styles } from '@brightspace-ui/core/components/typography/styles.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
+import { createClient } from '@brightspace-ui/logging';
+
+const LTI_POSTMESSAGE_SUBJECT_CAPABILITIES = 'org.imsglobal.lti.capabilities';
+const LTI_POSTMESSAGE_SUBJECT_PUTDATA = 'org.imsglobal.lti.put_data';
+const LTI_POSTMESSAGE_SUBJECT_GETDATA = 'org.imsglobal.lti.get_data';
+
+const logger = createClient('lti-components');
 
 class LtiLaunch extends LitElement {
 	static get properties() {
@@ -97,7 +104,6 @@ class LtiLaunch extends LitElement {
 		}
 
 		if (!event.data.subject || !event.data.message_id) {
-			//TODO: log error?
 			return;
 		}
 
@@ -116,15 +122,15 @@ class LtiLaunch extends LitElement {
 
 		const request = event.data;
 
-		if (request.subject === 'org.imsglobal.lti.capabilities') {
+		if (request.subject === LTI_POSTMESSAGE_SUBJECT_CAPABILITIES) {
 			return this._processLtiPostMessageCapabilities(event);
 		}
 
-		if (request.subject === 'org.imsglobal.lti.put_data') {
+		if (request.subject === LTI_POSTMESSAGE_SUBJECT_PUTDATA) {
 			return this._processLtiPostMessagePutData(event);
 		}
 
-		if (request.subject === 'org.imsglobal.lti.get_data') {
+		if (request.subject === LTI_POSTMESSAGE_SUBJECT_GETDATA) {
 			return this._processLtiPostMessageGetData(event);
 		}
 
@@ -134,9 +140,9 @@ class LtiLaunch extends LitElement {
 	_processLtiPostMessageCapabilities(event) {
 		return {
 			supported_messages: [
-				{ subject: 'org.imsglobal.lti.capabilities' },
-				{ subject: 'org.imsglobal.lti.put_data' },
-				{ subject: 'org.imsglobal.lti.get_data' }
+				{ subject: LTI_POSTMESSAGE_SUBJECT_CAPABILITIES },
+				{ subject: LTI_POSTMESSAGE_SUBJECT_PUTDATA },
+				{ subject: LTI_POSTMESSAGE_SUBJECT_GETDATA }
 			]
 		};
 	}
@@ -159,24 +165,24 @@ class LtiLaunch extends LitElement {
 
 		const store = this._ltiStorage[event.origin];
 
-		if (reachedStorageLimit(store)) {
-			//TODO: log error
-
-			return {
-				error: {
-					code: 'storage_exhaustion',
-					message: 'Reached storage limit of 4096 bytes / 500 keys.'
-				}
-			};
-		}
-
 		if (request.value === null || request.value === undefined) {
 			delete store[request.key];
 		} else {
+			if (reachedStorageLimit(store) && additionalStorageRequired(store, request.key, request.value) > 0) {
+				logger.error(null, `${LTI_POSTMESSAGE_SUBJECT_PUTDATA}: reached storage limit`);
+	
+				return {
+					error: {
+						code: 'storage_exhaustion',
+						message: 'Reached storage limit.'
+					}
+				};
+			}
+
 			store[request.key] = request.value;
 
 			if (reachedStorageLimit(store)) {
-				//TODO: log error
+				logger.error(null, `${LTI_POSTMESSAGE_SUBJECT_PUTDATA}: reached storage limit`);
 			}
 		}
 
@@ -201,6 +207,7 @@ class LtiLaunch extends LitElement {
 		const store = this._ltiStorage[event.origin];
 
 		if (!store || !(request.key in store)) {
+			logger.error(null, `${LTI_POSTMESSAGE_SUBJECT_GETDATA}: key not found`);
 			return {
 				error: {
 					code: 'key_not_found',
@@ -218,14 +225,30 @@ class LtiLaunch extends LitElement {
 	}
 }
 
+function ltiStorageLimitFlag() {
+	return D2L.LP.Web.UI.Flags.Flag('us132260-lti-component-postmessage-storage-limit', true);
+}
+
 function reachedStorageLimit(store) {
+	if (!ltiStorageLimitFlag()) {
+		return false;
+	}
+
 	return keyValueStoreSize(store) >= 4096 || Object.keys(store).length >= 500;
 }
 
 function keyValueStoreSize(store) {
-	Object.entries(store)
+	return Object.entries(store)
 		.map(([k,v]) => k.length + v.length)
 		.reduce((x, y) => x + y, 0);
+}
+
+function additionalStorageRequired(store, key, value) {
+	if (key in store) {
+		return value.length - store[key].length;
+	} else {
+		return key.length + value.length;
+	}
 }
 
 customElements.define('d2l-lti-launch', LtiLaunch);

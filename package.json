@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@brightspace-ui/core": "^1",
+    "@brightspace-ui/logging": "^1.4.0",
     "lit-element": "^2"
   },
   "version": "2.0.5"
