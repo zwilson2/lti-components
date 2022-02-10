@@ -3,7 +3,7 @@ import { classMap } from 'lit-html/directives/class-map.js';
 import { heading4Styles } from '@brightspace-ui/core/components/typography/styles.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 
-class LtiLaunch extends LitElement {
+export class LtiLaunch extends LitElement {
 	static get properties() {
 		return {
 			iFrameWidth: {
@@ -67,9 +67,8 @@ class LtiLaunch extends LitElement {
 			return;
 		}
 
-		let params;
-		try {
-			params = JSON.parse(event.data);
+		if (typeof event.data === 'string') {
+			const params = JSON.parse(event.data);
 
 			if (params.subject === 'lti.frameResize') {
 				const MAX_FRAME_HEIGHT = 10000;
@@ -89,30 +88,38 @@ class LtiLaunch extends LitElement {
 					}
 				}
 			}
-			return;
-		}
-		catch (exception) {
-			//don't error. new messages are objects and aren't meant to be parsed
-		}
 
-		if (!event.data.message_id || !event.data.subject) {
 			return;
 		}
 
-		const target_window = event.source;
+		const response = this._processLtiPostMessage(event);
+		if (response) {
+			event.source.postMessage(response, event.origin);
+		}
+	}
+
+	_processLtiPostMessage(event) {
+		if (!event.data.subject || !event.data.message_id) {
+			return null;
+		}
 
 		if (event.data.subject === 'org.imsglobal.lti.capabilities') {
-			const response = {
-				message_id: event.data.message_id,
-				subject: 'org.imsglobal.lti.capabilities.response',
-				supported_messages: [
-					{ subject: 'org.imsglobal.lti.capabilities' },
-					{ subject: 'org.imsglobal.lti.put_data' },
-					{ subject: 'org.imsglobal.lti.get_data' }
-				]
-			};
-			target_window.postMessage(response, event.origin);
+			return this._processLtiPostMessageCapabilities(event);
 		}
+
+		return null;
+	}
+
+	_processLtiPostMessageCapabilities(event) {
+		return {
+			subject: 'org.imsglobal.lti.capabilities.response',
+			message_id: event.data.message_id,
+			supported_messages: [
+				{ subject: 'org.imsglobal.lti.capabilities' },
+				{ subject: 'org.imsglobal.lti.put_data' },
+				{ subject: 'org.imsglobal.lti.get_data' }
+			]
+		};
 	}
 }
 
