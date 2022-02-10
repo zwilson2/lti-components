@@ -10,7 +10,7 @@ const LTI_POSTMESSAGE_SUBJECT_GETDATA = 'org.imsglobal.lti.get_data';
 
 const logger = createClient('lti-components');
 
-class LtiLaunch extends LitElement {
+export class LtiLaunch extends LitElement {
 	static get properties() {
 		return {
 			iFrameWidth: {
@@ -75,9 +75,8 @@ class LtiLaunch extends LitElement {
 			return;
 		}
 
-		let params;
-		try {
-			params = JSON.parse(event.data);
+		if (typeof event.data === 'string') {
+			const params = JSON.parse(event.data);
 
 			if (params.subject === 'lti.frameResize') {
 				const MAX_FRAME_HEIGHT = 10000;
@@ -97,44 +96,30 @@ class LtiLaunch extends LitElement {
 					}
 				}
 			}
+
 			return;
 		}
-		catch (exception) {
-			//don't error. new messages are objects and aren't meant to be parsed
-		}
 
+		const response = this._processLtiPostMessage(event);
+		if (response) {
+			event.source.postMessage(response, event.origin);
+		}
+	}
+
+	_processLtiPostMessage(event) {
 		if (!event.data.subject || !event.data.message_id) {
-			return;
+			return null;
 		}
 
-		let response = this._processLtiPostMessage(event);
+		let response = this._processLtiPostMessageHelper(event);
 		if (response) {
 			response = {
 				subject: `${event.data.subject}.response`,
 				message_id: event.data.message_id,
 				...response
 			};
-			event.source.postMessage(response, event.origin);
 		}
-	}
-
-	_processLtiPostMessage(event) {
-
-		const request = event.data;
-
-		if (request.subject === LTI_POSTMESSAGE_SUBJECT_CAPABILITIES) {
-			return this._processLtiPostMessageCapabilities();
-		}
-
-		if (request.subject === LTI_POSTMESSAGE_SUBJECT_GETDATA) {
-			return this._processLtiPostMessageGetData(event);
-		}
-
-		if (request.subject === LTI_POSTMESSAGE_SUBJECT_PUTDATA) {
-			return this._processLtiPostMessagePutData(event);
-		}
-
-		return null;
+		return response;
 	}
 
 	_processLtiPostMessageCapabilities() {
@@ -178,6 +163,23 @@ class LtiLaunch extends LitElement {
 			value: value
 		};
 	}
+
+	_processLtiPostMessageHelper(event) {
+		if (event.data.subject === LTI_POSTMESSAGE_SUBJECT_CAPABILITIES) {
+			return this._processLtiPostMessageCapabilities();
+		}
+
+		if (event.data.subject === LTI_POSTMESSAGE_SUBJECT_GETDATA) {
+			return this._processLtiPostMessageGetData(event);
+		}
+
+		if (event.data.subject === LTI_POSTMESSAGE_SUBJECT_PUTDATA) {
+			return this._processLtiPostMessagePutData(event);
+		}
+
+		return null;
+	}
+
 	_processLtiPostMessagePutData(event) {
 		const request = event.data;
 
