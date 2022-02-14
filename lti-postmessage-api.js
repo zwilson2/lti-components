@@ -1,5 +1,5 @@
 import { createClient } from '@brightspace-ui/logging';
-import { LtiStorage } from "./lti-storage";
+import { LtiStorage } from './lti-storage.js';
 
 const LTI_POSTMESSAGE_SUBJECT_CAPABILITIES = 'org.imsglobal.lti.capabilities';
 const LTI_POSTMESSAGE_SUBJECT_PUTDATA = 'org.imsglobal.lti.put_data';
@@ -33,20 +33,8 @@ export class LtiPostmessageApi {
 		return response;
 	}
 
-	_processLtiPostMessageHelper(event) {
-		if (event.data.subject === LTI_POSTMESSAGE_SUBJECT_CAPABILITIES) {
-			return this._processLtiPostMessageCapabilities();
-		}
-
-		if (event.data.subject === LTI_POSTMESSAGE_SUBJECT_GETDATA) {
-			return this._processLtiPostMessageGetData(event);
-		}
-
-		if (event.data.subject === LTI_POSTMESSAGE_SUBJECT_PUTDATA) {
-			return this._processLtiPostMessagePutData(event);
-		}
-
-		return null;
+	_logError(message) {
+		logger.error(null, message);
 	}
 
 	_processLtiPostMessageCapabilities() {
@@ -87,6 +75,22 @@ export class LtiPostmessageApi {
 		};
 	}
 
+	_processLtiPostMessageHelper(event) {
+		if (event.data.subject === LTI_POSTMESSAGE_SUBJECT_CAPABILITIES) {
+			return this._processLtiPostMessageCapabilities();
+		}
+
+		if (event.data.subject === LTI_POSTMESSAGE_SUBJECT_GETDATA) {
+			return this._processLtiPostMessageGetData(event);
+		}
+
+		if (event.data.subject === LTI_POSTMESSAGE_SUBJECT_PUTDATA) {
+			return this._processLtiPostMessagePutData(event);
+		}
+
+		return null;
+	}
+
 	_processLtiPostMessagePutData(event) {
 		if (event.data.key === null || event.data.key === undefined) {
 			return {
@@ -116,9 +120,5 @@ export class LtiPostmessageApi {
 			key: event.data.key,
 			value: event.data.value
 		};
-	}
-
-	_logError(message) {
-		logger.error(null, message);
 	}
 }

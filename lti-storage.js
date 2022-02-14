@@ -9,6 +9,20 @@ export class LtiStorage {
 		this.tryPut(origin, key, null);
 	}
 
+	get(origin, key) {
+		const store = this._storage[origin];
+
+		if (!store || !(key in store)) {
+			return null;
+		}
+
+		return store[key];
+	}
+
+	reachedStorageLimit(origin) {
+		return this._reachedStorageLimit(this._storage[origin]);
+	}
+
 	tryPut(origin, key, value) {
 		if (value === null || value === undefined) {
 			this._storage[origin] && delete this._storage[origin][key];
@@ -28,20 +42,6 @@ export class LtiStorage {
 
 			return true;
 		}
-	}
-
-	get(origin, key) {
-		const store = this._storage[origin];
-
-		if (!store || !(key in store)) {
-			return null;
-		}
-
-		return store[key];
-	}
-
-	reachedStorageLimit(origin) {
-		return this._reachedStorageLimit(this._storage[origin]);
 	}
 
 	_reachedStorageLimit(store) {
@@ -67,6 +67,3 @@ function additionalStorageRequired(store, key, value) {
 		return key.length + value.length;
 	}
 }
-
-// Notes:
-// Test deleting a key/value pair from empty storage

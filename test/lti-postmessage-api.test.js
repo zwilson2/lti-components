@@ -1,6 +1,6 @@
 import { expect } from '@open-wc/testing';
+import { LtiPostmessageApi } from '../lti-postmessage-api.js';
 import sinon from 'sinon';
-import { LtiPostmessageApi } from "../lti-postmessage-api";
 
 describe('lti postmessage api', () => {
 	let api;
@@ -185,7 +185,7 @@ describe('lti postmessage api', () => {
 		});
 
 		it('should store empty string value', () => {
-			let putEvent = {
+			const putEvent = {
 				data: {
 					subject: 'org.imsglobal.lti.put_data',
 					message_id: '1',

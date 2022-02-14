@@ -1,5 +1,5 @@
+import '../lti-launch.js';
 import { expect, fixture, html } from '@open-wc/testing';
-import "../lti-launch.js";
 import { runConstructor } from '@brightspace-ui/core/tools/constructor-test-helper.js';
 
 window.D2L = {
@@ -14,7 +14,7 @@ window.D2L = {
 			}
 		}
 	}
-}
+};
 
 describe('d2l-lti-launch', () => {
 

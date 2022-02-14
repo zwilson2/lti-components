@@ -2,9 +2,9 @@ import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { classMap } from 'lit-html/directives/class-map.js';
 import { heading4Styles } from '@brightspace-ui/core/components/typography/styles.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
-import { LtiPostmessageApi } from './lti-postmessage-api';
+import { LtiPostmessageApi } from './lti-postmessage-api.js';
 
-export class LtiLaunch extends LitElement {
+class LtiLaunch extends LitElement {
 	static get properties() {
 		return {
 			iFrameWidth: {
