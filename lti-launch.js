@@ -1,14 +1,8 @@
 import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { classMap } from 'lit-html/directives/class-map.js';
-import { createClient } from '@brightspace-ui/logging';
 import { heading4Styles } from '@brightspace-ui/core/components/typography/styles.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
-
-const LTI_POSTMESSAGE_SUBJECT_CAPABILITIES = 'org.imsglobal.lti.capabilities';
-const LTI_POSTMESSAGE_SUBJECT_PUTDATA = 'org.imsglobal.lti.put_data';
-const LTI_POSTMESSAGE_SUBJECT_GETDATA = 'org.imsglobal.lti.get_data';
-
-const logger = createClient('lti-components');
+import { LtiPostmessageApi } from './lti-postmessage-api';
 
 export class LtiLaunch extends LitElement {
 	static get properties() {
@@ -43,7 +37,7 @@ export class LtiLaunch extends LitElement {
 		super();
 
 		this.iFrameHeight = 600;
-		this._ltiStorage = {};
+		this._ltiPostmessageApi = new LtiPostmessageApi(ltiStorageLimitFlag());
 	}
 
 	connectedCallback() {
@@ -100,157 +94,15 @@ export class LtiLaunch extends LitElement {
 			return;
 		}
 
-		const response = this._processLtiPostMessage(event);
+		const response = this._ltiPostmessageApi.processLtiPostMessage(event);
 		if (response) {
 			event.source.postMessage(response, event.origin);
 		}
 	}
-
-	_processLtiPostMessage(event) {
-		if (!event.data.subject || !event.data.message_id) {
-			return null;
-		}
-
-		let response = this._processLtiPostMessageHelper(event);
-		if (response) {
-			response = {
-				subject: `${event.data.subject}.response`,
-				message_id: event.data.message_id,
-				...response
-			};
-		}
-		return response;
-	}
-
-	_processLtiPostMessageCapabilities() {
-		return {
-			supported_messages: [
-				{ subject: LTI_POSTMESSAGE_SUBJECT_CAPABILITIES },
-				{ subject: LTI_POSTMESSAGE_SUBJECT_PUTDATA },
-				{ subject: LTI_POSTMESSAGE_SUBJECT_GETDATA }
-			]
-		};
-	}
-
-	_processLtiPostMessageGetData(event) {
-		const request = event.data;
-
-		if (request.key === null || request.key === undefined) {
-			return {
-				error: {
-					code: 'bad_request',
-					message: 'The get_data request is missing the \'key\' field.'
-				}
-			};
-		}
-
-		const store = this._ltiStorage[event.origin];
-
-		if (!store || !(request.key in store)) {
-			logger.error(null, `${LTI_POSTMESSAGE_SUBJECT_GETDATA}: key not found`);
-			return {
-				error: {
-					code: 'key_not_found',
-					message: `Key not found: ${request.key}`
-				}
-			};
-		}
-
-		const value = store[request.key];
-
-		return {
-			key: request.key,
-			value: value
-		};
-	}
-
-	_processLtiPostMessageHelper(event) {
-		if (event.data.subject === LTI_POSTMESSAGE_SUBJECT_CAPABILITIES) {
-			return this._processLtiPostMessageCapabilities();
-		}
-
-		if (event.data.subject === LTI_POSTMESSAGE_SUBJECT_GETDATA) {
-			return this._processLtiPostMessageGetData(event);
-		}
-
-		if (event.data.subject === LTI_POSTMESSAGE_SUBJECT_PUTDATA) {
-			return this._processLtiPostMessagePutData(event);
-		}
-
-		return null;
-	}
-
-	_processLtiPostMessagePutData(event) {
-		const request = event.data;
-
-		if (request.key === null || request.key === undefined) {
-			return {
-				error: {
-					code: 'bad_request',
-					message: 'The put_data request is missing the \'key\' field.'
-				}
-			};
-		}
-
-		if (!this._ltiStorage[event.origin]) {
-			this._ltiStorage[event.origin] = {};
-		}
-
-		const store = this._ltiStorage[event.origin];
-
-		if (request.value === null || request.value === undefined) {
-			delete store[request.key];
-		} else {
-			if (reachedStorageLimit(store) && additionalStorageRequired(store, request.key, request.value) > 0) {
-				logger.error(null, `${LTI_POSTMESSAGE_SUBJECT_PUTDATA}: reached storage limit`);
-
-				return {
-					error: {
-						code: 'storage_exhaustion',
-						message: 'Reached storage limit.'
-					}
-				};
-			}
-
-			store[request.key] = request.value;
-
-			if (reachedStorageLimit(store)) {
-				logger.error(null, `${LTI_POSTMESSAGE_SUBJECT_PUTDATA}: reached storage limit`);
-			}
-		}
-
-		return {
-			key: request.key,
-			value: store[request.key]
-		};
-	}
-
 }
 
 function ltiStorageLimitFlag() {
 	return D2L.LP.Web.UI.Flags.Flag('us132260-lti-component-postmessage-storage-limit', true);
-}
-
-function reachedStorageLimit(store) {
-	if (!ltiStorageLimitFlag()) {
-		return false;
-	}
-
-	return keyValueStoreSize(store) >= 4096 || Object.keys(store).length >= 500;
-}
-
-function keyValueStoreSize(store) {
-	return Object.entries(store)
-		.map(([k, v]) => k.length + v.length)
-		.reduce((x, y) => x + y, 0);
-}
-
-function additionalStorageRequired(store, key, value) {
-	if (key in store) {
-		return value.length - store[key].length;
-	} else {
-		return key.length + value.length;
-	}
 }
 
 customElements.define('d2l-lti-launch', LtiLaunch);
