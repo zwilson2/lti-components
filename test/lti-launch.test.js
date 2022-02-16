@@ -1,5 +1,5 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { LtiLaunch } from '../lti-launch.js';
+import '../lti-launch.js';
 import { runConstructor } from '@brightspace-ui/core/tools/constructor-test-helper.js';
 
 window.D2L = {
@@ -65,33 +65,6 @@ describe('d2l-lti-launch', () => {
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('title')).equals(iframeTitle);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('height')).equals(iframeHeight);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('width')).equals(null);
-		});
-	});
-
-	describe('lti postMessage support', () => {
-		it('should respond to get capabilities', () => {
-			const ltiLaunch = new LtiLaunch();
-
-			const event = {
-				data: {
-					subject: 'org.imsglobal.lti.capabilities',
-					message_id: '12345'
-				},
-				origin: 'http://example.com'
-			};
-
-			const response = ltiLaunch._processLtiPostMessage(event);
-
-			const expected = {
-				subject: 'org.imsglobal.lti.capabilities.response',
-				message_id: '12345',
-				supported_messages: [
-					{ subject: 'org.imsglobal.lti.capabilities' },
-					{ subject: 'org.imsglobal.lti.put_data' },
-					{ subject: 'org.imsglobal.lti.get_data' }
-				]
-			};
-			expect(response).eqls(expected);
 		});
 	});
 });

@@ -4,7 +4,7 @@ import { heading4Styles } from '@brightspace-ui/core/components/typography/style
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { LtiPostmessageApi } from './lti-postmessage-api.js';
 
-export class LtiLaunch extends LitElement {
+class LtiLaunch extends LitElement {
 	static get properties() {
 		return {
 			iFrameWidth: {
