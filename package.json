@@ -44,5 +44,5 @@
     "lit-element": "^2",
     "sinon": "^13.0.1"
   },
-  "version": "2.0.5"
+  "version": "2.1.0"
 }
