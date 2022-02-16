@@ -98,8 +98,6 @@ export class LtiLaunch extends LitElement {
 		if (response) {
 			event.source.postMessage(response, event.origin);
 		}
-
-		return null;
 	}
 }
 
