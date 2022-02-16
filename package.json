@@ -34,6 +34,8 @@
   "files": [
     "lti-launch.js",
     "lti-launch.serge.json",
+    "lti-postmessage-api.js",
+    "lti-storage.js",
     "/lang"
   ],
   "publishConfig": {
