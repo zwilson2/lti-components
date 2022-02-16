@@ -2,8 +2,9 @@ import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { classMap } from 'lit-html/directives/class-map.js';
 import { heading4Styles } from '@brightspace-ui/core/components/typography/styles.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
+import { LtiPostmessageApi } from './lti-postmessage-api.js';
 
-export class LtiLaunch extends LitElement {
+class LtiLaunch extends LitElement {
 	static get properties() {
 		return {
 			iFrameWidth: {
@@ -36,6 +37,7 @@ export class LtiLaunch extends LitElement {
 		super();
 
 		this.iFrameHeight = 600;
+		this._ltiPostmessageApi = new LtiPostmessageApi(ltiStorageLimitFlag());
 	}
 
 	connectedCallback() {
@@ -92,35 +94,15 @@ export class LtiLaunch extends LitElement {
 			return;
 		}
 
-		const response = this._processLtiPostMessage(event);
+		const response = this._ltiPostmessageApi.processLtiPostMessage(event);
 		if (response) {
 			event.source.postMessage(response, event.origin);
 		}
 	}
+}
 
-	_processLtiPostMessage(event) {
-		if (!event.data.subject || !event.data.message_id) {
-			return null;
-		}
-
-		if (event.data.subject === 'org.imsglobal.lti.capabilities') {
-			return this._processLtiPostMessageCapabilities(event);
-		}
-
-		return null;
-	}
-
-	_processLtiPostMessageCapabilities(event) {
-		return {
-			subject: 'org.imsglobal.lti.capabilities.response',
-			message_id: event.data.message_id,
-			supported_messages: [
-				{ subject: 'org.imsglobal.lti.capabilities' },
-				{ subject: 'org.imsglobal.lti.put_data' },
-				{ subject: 'org.imsglobal.lti.get_data' }
-			]
-		};
-	}
+function ltiStorageLimitFlag() {
+	return D2L.LP.Web.UI.Flags.Flag('us132260-lti-component-postmessage-storage-limit', true);
 }
 
 customElements.define('d2l-lti-launch', LtiLaunch);
