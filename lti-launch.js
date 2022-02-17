@@ -102,7 +102,15 @@ class LtiLaunch extends LitElement {
 }
 
 function ltiStorageLimitFlag() {
-	return D2L.LP.Web.UI.Flags.Flag('us132260-lti-component-postmessage-storage-limit', true);
+	try {
+		if (D2L && D2L.LP && D2L.LP.Web && D2L.LP.Web.UI && D2L.LP.Web.UI.Flags) {
+			return D2L.LP.Web.UI.Flags.Flag('us132260-lti-component-postmessage-storage-limit', true);
+		}
+	} catch (err) {
+		return true;
+	}
+
+	return true;
 }
 
 customElements.define('d2l-lti-launch', LtiLaunch);
