@@ -2,20 +2,6 @@ import '../lti-launch.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import { runConstructor } from '@brightspace-ui/core/tools/constructor-test-helper.js';
 
-window.D2L = {
-	LP: {
-		Web: {
-			UI: {
-				Flags: {
-					Flag() {
-						return true;
-					}
-				}
-			}
-		}
-	}
-};
-
 describe('d2l-lti-launch', () => {
 
 	describe('accessibility', () => {
