@@ -46,5 +46,5 @@
     "@brightspace-ui/logging": "^1.4.0",
     "lit-element": "^2"
   },
-  "version": "2.2.2"
+  "version": "2.2.3"
 }
