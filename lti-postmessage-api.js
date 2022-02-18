@@ -88,7 +88,13 @@ export class LtiPostmessageApi {
 			return this._processLtiPostMessagePutData(event);
 		}
 
-		return null;
+		console.error("We do not accept capability specified");
+		return {
+			error: {
+				code: 'unsupported_subject',
+				message: 'The capability specified is not an supported subject'
+			}
+		};;
 	}
 
 	_processLtiPostMessagePutData(event) {
