@@ -19,7 +19,15 @@ export class LtiPostmessageApi {
 
 	processLtiPostMessage(event) {
 		if (!event.data.subject || !event.data.message_id) {
-			return null;
+			const errorLog = {
+				error: {
+					code: 'bad_request',
+					message: 'there is no subject or message_id within event.data being sent'
+				}
+			};
+			this._logError(JSON.stringify(errorLog));
+
+			return errorLog;
 		}
 
 		let response = this._processLtiPostMessageHelper(event);
@@ -88,17 +96,17 @@ export class LtiPostmessageApi {
 			return this._processLtiPostMessagePutData(event);
 		}
 
-		console.error("We do not accept capability specified");
+		console.error('We do not accept capability specified');
 		return {
 			error: {
 				code: 'unsupported_subject',
 				message: 'The capability specified is not an supported subject'
 			}
-		};;
+		};
 	}
 
 	_processLtiPostMessagePutData(event) {
-		if (event.data.key === null || event.data.key === undefined) {
+		if (!event.data.key) {
 			return {
 				error: {
 					code: 'bad_request',
