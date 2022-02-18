@@ -341,7 +341,7 @@ describe('lti postmessage api', () => {
 				message_id: '2',
 				error: {
 					code: 'storage_exhaustion',
-					message: 'Reached storage limit.'
+					message: 'For specified origin the combination of key/value pairs have reached or exceeded storage limit of 4096 bytes. The number of keys are 1'
 				}
 			});
 		});
@@ -403,7 +403,7 @@ describe('lti postmessage api', () => {
 				message_id: '2',
 				error: {
 					code: 'storage_exhaustion',
-					message: 'Reached storage limit.'
+					message: 'For specified origin the combination of key/value pairs have reached or exceeded storage limit of 4096 bytes. The number of keys are 1'
 				}
 			});
 		});

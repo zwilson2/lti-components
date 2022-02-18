@@ -9,12 +9,8 @@ const logger = createClient('lti-components');
 
 export class LtiPostmessageApi {
 
-	constructor(ltiStorageLimit) {
-		if (ltiStorageLimit) {
-			this._ltiStorage = new LtiStorage(4096, 500);
-		} else {
-			this._ltiStorage = new LtiStorage();
-		}
+	constructor(checkLtiStorageLimitFlag) {
+		this._ltiStorage = new LtiStorage(checkLtiStorageLimitFlag);
 	}
 
 	processLtiPostMessage(event) {
@@ -56,7 +52,7 @@ export class LtiPostmessageApi {
 	}
 
 	_processLtiPostMessageGetData(event) {
-		if (event.data.key === null || event.data.key === undefined) {
+		if (!event.data.key) {
 			return {
 				error: {
 					code: 'bad_request',
@@ -121,7 +117,7 @@ export class LtiPostmessageApi {
 			return {
 				error: {
 					code: 'storage_exhaustion',
-					message: 'Reached storage limit.'
+					message: `For specified origin the combination of key/value pairs have reached or exceeded storage limit of ${this._ltiStorage._sizeLimit} bytes. The number of keys are ${Object.keys(this._ltiStorage.getStore(event.origin)).length}`
 				}
 			};
 		}

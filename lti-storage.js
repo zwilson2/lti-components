@@ -1,7 +1,8 @@
 export class LtiStorage {
-	constructor(sizeLimit, keyLimit) {
-		this._sizeLimit = sizeLimit;
-		this._keyLimit = keyLimit;
+	constructor(checkLtiStorageLimitFlag = true) {
+		this._checkLtiStorageLimitFlag = checkLtiStorageLimitFlag;
+		this._sizeLimit = 4096;
+		this._keyLimit = 500;
 		this._storage = {};
 	}
 
@@ -19,6 +20,11 @@ export class LtiStorage {
 		return store[key];
 	}
 
+	getStore(origin) {
+		const store = this._storage[origin];
+		return store;
+	}
+
 	reachedStorageLimit(origin) {
 		return this._reachedStorageLimit(this._storage[origin]);
 	}
@@ -27,21 +33,18 @@ export class LtiStorage {
 		if (value === null || value === undefined) {
 			this._storage[origin] && delete this._storage[origin][key];
 			return true;
-		} else {
-			if (!this._storage[origin]) {
-				this._storage[origin] = {};
-			}
-
-			const store = this._storage[origin];
-
+		}
+		if (!this._storage[origin]) {
+			this._storage[origin] = {};
+		}
+		const store = this._storage[origin];
+		if (this._checkLtiStorageLimitFlag) {
 			if (this._reachedStorageLimit(store) && additionalStorageRequired(store, key, value) > 0) {
 				return false;
 			}
-
-			store[key] = value;
-
-			return true;
 		}
+		store[key] = value;
+		return true;
 	}
 
 	_reachedStorageLimit(store) {
