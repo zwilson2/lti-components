@@ -41,6 +41,21 @@ describe('lti postmessage api', () => {
 	});
 
 	describe('storage', () => {
+		it('should return null when sending invalid subject', () => {
+			const putEvent = {
+				data: {
+					subject: 'orggg.imsglobal.lti.put_data',
+					message_id: '123456',
+					key: 'my_key',
+					value: 'my_data'
+				},
+				origin: 'http://example.com'
+			};
+
+			const putResponse = api.processLtiPostMessage(putEvent);
+			expect(putResponse).eqls(null);
+		});
+
 		it('should store and retrieve data', () => {
 			const putEvent = {
 				data: {

@@ -14,11 +14,14 @@ export class LtiPostmessageApi {
 	}
 
 	processLtiPostMessage(event) {
-		if (!event.data.subject || !event.data.message_id) {
+		if (!event.data.subject || !event.data.subject.startsWith('org.imsglobal.lti')) {
+			return null;
+		}
+		if (!event.data.message_id) {
 			const errorLog = {
 				error: {
 					code: 'bad_request',
-					message: 'there is no subject or message_id within event.data being sent'
+					message: 'there is no message_id within event.data being sent'
 				}
 			};
 			this._logError(JSON.stringify(errorLog));
