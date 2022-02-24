@@ -18,9 +18,9 @@ class LtiLaunch extends LitElement {
 				type: String,
 				attribute: 'lti-launch-url'
 			},
-			root: {
+			insidePage: {
 				type: Boolean,
-				attribute: 'root'
+				attribute: 'inside-page'
 			}
 		};
 	}
@@ -40,13 +40,13 @@ class LtiLaunch extends LitElement {
 		super();
 
 		this.iFrameHeight = 600;
-		this.root = false;
+		this.insidePage = false;
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		if (window === window.top && this.root) {
+		if (window === window.top && this.insidePage) {
 			window.location.href = this._launchUrl;
 		}
 
