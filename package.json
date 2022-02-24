@@ -28,11 +28,14 @@
     "eslint-plugin-lit": "^1",
     "eslint-plugin-sort-class-members": "^1",
     "lit-analyzer": "^1",
+    "sinon": "^13.0.1",
     "stylelint": "^14"
   },
   "files": [
     "lti-launch.js",
     "lti-launch.serge.json",
+    "lti-postmessage-api.js",
+    "lti-storage.js",
     "/lang"
   ],
   "publishConfig": {
@@ -40,7 +43,8 @@
   },
   "dependencies": {
     "@brightspace-ui/core": "^1",
+    "@brightspace-ui/logging": "^1.4.0",
     "lit-element": "^2"
   },
-  "version": "2.0.5"
+  "version": "2.2.3"
 }
