@@ -18,6 +18,10 @@ class LtiLaunch extends LitElement {
 			_launchUrl: {
 				type: String,
 				attribute: 'lti-launch-url'
+			},
+			insidePage: {
+				type: Boolean,
+				attribute: 'inside-page'
 			}
 		};
 	}
@@ -37,11 +41,16 @@ class LtiLaunch extends LitElement {
 		super();
 
 		this.iFrameHeight = 600;
+		this.insidePage = false;
 		this._ltiPostmessageApi = new LtiPostmessageApi(ltiStorageLimitFlag());
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
+
+		if (window === window.top && this.insidePage) {
+			window.location.href = this._launchUrl;
+		}
 
 		this._handleMessage = this._handleMessage.bind(this);
 		window.addEventListener('message', this._handleMessage);
