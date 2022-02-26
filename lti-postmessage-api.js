@@ -95,13 +95,14 @@ export class LtiPostmessageApi {
 			return this._processLtiPostMessagePutData(event);
 		}
 
-		console.error('We do not accept capability specified');
-		return {
+		const errorLog = {
 			error: {
 				code: 'unsupported_subject',
-				message: 'The capability specified is not an supported subject'
+				message: `${event.data.subject} is not a supported capability subject`
 			}
 		};
+		this._logError(JSON.stringify(errorLog));
+		return errorLog;
 	}
 
 	_processLtiPostMessagePutData(event) {
@@ -120,7 +121,7 @@ export class LtiPostmessageApi {
 			return {
 				error: {
 					code: 'storage_exhaustion',
-					message: `For specified origin the combination of key/value pairs have reached or exceeded storage limit of ${this._ltiStorage._sizeLimit} bytes. The number of keys are ${Object.keys(this._ltiStorage.getStore(event.origin)).length}`
+					message: `For specified origin the combination of key/value pairs have reached or exceeded storage limit of ${this._ltiStorage._sizeLimit} bytes. The number of keys are ${Object.keys(this._ltiStorage.getStore(event.origin)).length} and the number of bytes used are ${this._ltiStorage._storeSize(this._ltiStorage.getStore(event.origin))}`
 				}
 			};
 		}

@@ -329,7 +329,7 @@ describe('lti postmessage api', () => {
 			});
 		});
 
-		it('should return storage_exhaustion when storing entry while over storage limit', () => {
+		it('should return exceeded storage error code when storing entry while over storage limit', () => {
 			let putEvent = {
 				data: {
 					subject: 'org.imsglobal.lti.put_data',
@@ -356,7 +356,7 @@ describe('lti postmessage api', () => {
 				message_id: '2',
 				error: {
 					code: 'storage_exhaustion',
-					message: 'For specified origin the combination of key/value pairs have reached or exceeded storage limit of 4096 bytes. The number of keys are 1'
+					message: 'For specified origin the combination of key/value pairs have reached or exceeded storage limit of 4096 bytes. The number of keys are 1 and the number of bytes used are 5006'
 				}
 			});
 		});
@@ -391,7 +391,7 @@ describe('lti postmessage api', () => {
 			});
 		});
 
-		it('should return storage_exhaustion when replacing data with bigger data while over storage limit', () => {
+		it('should return exceeded storage error code when replacing data with bigger data while over storage limit', () => {
 			let putEvent = {
 				data: {
 					subject: 'org.imsglobal.lti.put_data',
@@ -418,7 +418,7 @@ describe('lti postmessage api', () => {
 				message_id: '2',
 				error: {
 					code: 'storage_exhaustion',
-					message: 'For specified origin the combination of key/value pairs have reached or exceeded storage limit of 4096 bytes. The number of keys are 1'
+					message: 'For specified origin the combination of key/value pairs have reached or exceeded storage limit of 4096 bytes. The number of keys are 1 and the number of bytes used are 5006'
 				}
 			});
 		});

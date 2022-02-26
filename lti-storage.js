@@ -52,15 +52,15 @@ export class LtiStorage {
 			return false;
 		}
 
-		return (this._sizeLimit > 0 && storeSize(store) >= this._sizeLimit)
+		return (this._sizeLimit > 0 && this._storeSize(store) >= this._sizeLimit)
 			|| (this._keyLimit > 0 && Object.keys(store).length >= this._keyLimit);
 	}
-}
 
-function storeSize(store) {
-	return Object.entries(store)
-		.map(([k, v]) => k.length + v.length)
-		.reduce((x, y) => x + y, 0);
+	_storeSize(store) {
+		return Object.entries(store)
+			.map(([k, v]) => k.length + v.length)
+			.reduce((x, y) => x + y, 0);
+	}
 }
 
 function additionalStorageRequired(store, key, value) {
