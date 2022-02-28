@@ -164,8 +164,7 @@ describe('lti postmessage api', () => {
 			expect(putResponse).eqls({
 				subject: 'org.imsglobal.lti.put_data.response',
 				message_id: '2',
-				key: 'my_key',
-				value: undefined
+				key: 'my_key'
 			});
 		});
 
@@ -194,8 +193,7 @@ describe('lti postmessage api', () => {
 			expect(putResponse).eqls({
 				subject: 'org.imsglobal.lti.put_data.response',
 				message_id: '2',
-				key: 'my_key',
-				value: null
+				key: 'my_key'
 			});
 		});
 

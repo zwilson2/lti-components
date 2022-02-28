@@ -130,9 +130,13 @@ export class LtiPostmessageApi {
 			this._logError(`${LTI_POSTMESSAGE_SUBJECT_PUTDATA}: reached storage limit`);
 		}
 
-		return {
-			key: event.data.key,
-			value: event.data.value
+		const response = {
+			key: event.data.key
 		};
+		if (event.data.value !== null && event.data.value !== undefined) {
+			response.value = event.data.value;
+		}
+
+		return response;
 	}
 }
