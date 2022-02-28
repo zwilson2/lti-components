@@ -41,7 +41,7 @@ describe('lti postmessage api', () => {
 	});
 
 	describe('storage', () => {
-		it('should return null when sending invalid subject', () => {
+		it('should return null when sending invalid lti subject', () => {
 			const putEvent = {
 				data: {
 					subject: 'orggg.imsglobal.lti.put_data',
@@ -54,6 +54,47 @@ describe('lti postmessage api', () => {
 
 			const putResponse = api.processLtiPostMessage(putEvent);
 			expect(putResponse).eqls(null);
+		});
+
+		it('should return unsupported_subject error when sending invalid subject', () => {
+			const putEvent = {
+				data: {
+					subject: 'org.imsglobal.lti.put_dataaa',
+					message_id: '123456',
+					key: 'my_key',
+					value: 'my_data'
+				},
+				origin: 'http://example.com'
+			};
+
+			const putResponse = api.processLtiPostMessage(putEvent);
+			expect(putResponse).eqls({
+				subject: 'org.imsglobal.lti.put_dataaa.response',
+				message_id: '123456',
+				error: {
+					code: 'unsupported_subject',
+					message: 'org.imsglobal.lti.put_dataaa is not a supported capability subject'
+				}
+			});
+		});
+
+		it('should return bad_request error when sending no messageId', () => {
+			const putEvent = {
+				data: {
+					subject: 'org.imsglobal.lti.put_data',
+					key: 'my_key',
+					value: 'my_data'
+				},
+				origin: 'http://example.com'
+			};
+
+			const putResponse = api.processLtiPostMessage(putEvent);
+			expect(putResponse).eqls({
+				error: {
+					code: 'bad_request',
+					message: 'There is no message_id within event.data being sent'
+				}
+			});
 		});
 
 		it('should store and retrieve data', () => {

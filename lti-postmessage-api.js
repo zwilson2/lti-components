@@ -21,7 +21,7 @@ export class LtiPostmessageApi {
 			const errorLog = {
 				error: {
 					code: 'bad_request',
-					message: 'there is no message_id within event.data being sent'
+					message: 'There is no message_id within event.data being sent'
 				}
 			};
 			this._logError(JSON.stringify(errorLog));
