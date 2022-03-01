@@ -52,5 +52,19 @@ describe('d2l-lti-launch', () => {
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('height')).equals(iframeHeight);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('width')).equals(null);
 		});
+
+		it('should change launchURL with pre existing query parameters', async() => {
+			const queryLaunchUrl = 'http://example.com/?example=true';
+			const queryIFrameTitle = 'example.com/?example=true';
+			const element = await fixture(html`<d2l-lti-launch height="${height}" width="${width}" lti-launch-url="${queryLaunchUrl}"></d2l-lti-launch>`);
+
+			expect(element.shadowRoot.querySelector('iframe').getAttribute('id')).equals(iframeId);
+			expect(element.shadowRoot.querySelector('iframe').getAttribute('data-test-id')).equals(iframeTestId);
+			expect(element.shadowRoot.querySelector('iframe').getAttribute('class')).equals(iframeClass);
+			expect(element.shadowRoot.querySelector('iframe').getAttribute('src')).equals(`${queryLaunchUrl}&signalStorage=true`);
+			expect(element.shadowRoot.querySelector('iframe').getAttribute('title')).equals(`${queryIFrameTitle}&signalStorage=true`);
+			expect(element.shadowRoot.querySelector('iframe').getAttribute('height')).equals(iframeHeight);
+			expect(element.shadowRoot.querySelector('iframe').getAttribute('width')).equals(iframeWidth);
+		});
 	});
 });
