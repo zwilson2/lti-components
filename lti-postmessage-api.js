@@ -9,17 +9,24 @@ const logger = createClient('lti-components');
 
 export class LtiPostmessageApi {
 
-	constructor(ltiStorageLimit) {
-		if (ltiStorageLimit) {
-			this._ltiStorage = new LtiStorage(4096, 500);
-		} else {
-			this._ltiStorage = new LtiStorage();
-		}
+	constructor(checkLtiStorageLimitFlag) {
+		this._ltiStorage = new LtiStorage(checkLtiStorageLimitFlag);
 	}
 
 	processLtiPostMessage(event) {
-		if (!event.data.subject || !event.data.message_id) {
+		if (!event.data.subject || !event.data.subject.startsWith('org.imsglobal.lti')) {
 			return null;
+		}
+		if (!event.data.message_id) {
+			const errorLog = {
+				error: {
+					code: 'bad_request',
+					message: 'There is no message_id within event.data being sent'
+				}
+			};
+			this._logError(JSON.stringify(errorLog));
+
+			return errorLog;
 		}
 
 		let response = this._processLtiPostMessageHelper(event);
@@ -48,7 +55,7 @@ export class LtiPostmessageApi {
 	}
 
 	_processLtiPostMessageGetData(event) {
-		if (event.data.key === null || event.data.key === undefined) {
+		if (!event.data.key) {
 			return {
 				error: {
 					code: 'bad_request',
@@ -88,11 +95,18 @@ export class LtiPostmessageApi {
 			return this._processLtiPostMessagePutData(event);
 		}
 
-		return null;
+		const errorLog = {
+			error: {
+				code: 'unsupported_subject',
+				message: `${event.data.subject} is not a supported capability subject`
+			}
+		};
+		this._logError(JSON.stringify(errorLog));
+		return errorLog;
 	}
 
 	_processLtiPostMessagePutData(event) {
-		if (event.data.key === null || event.data.key === undefined) {
+		if (!event.data.key) {
 			return {
 				error: {
 					code: 'bad_request',
@@ -107,7 +121,7 @@ export class LtiPostmessageApi {
 			return {
 				error: {
 					code: 'storage_exhaustion',
-					message: 'Reached storage limit.'
+					message: `For specified origin the combination of key/value pairs have reached or exceeded storage limit of ${this._ltiStorage._sizeLimit} bytes. Current Key count: ${Object.keys(this._ltiStorage.getStore(event.origin)).length}, Current Byte count: ${this._ltiStorage._storeSize(this._ltiStorage.getStore(event.origin))}`
 				}
 			};
 		}
@@ -116,9 +130,13 @@ export class LtiPostmessageApi {
 			this._logError(`${LTI_POSTMESSAGE_SUBJECT_PUTDATA}: reached storage limit`);
 		}
 
-		return {
-			key: event.data.key,
-			value: event.data.value
+		const response = {
+			key: event.data.key
 		};
+		if (event.data.value !== null && event.data.value !== undefined) {
+			response.value = event.data.value;
+		}
+
+		return response;
 	}
 }

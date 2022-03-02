@@ -41,6 +41,62 @@ describe('lti postmessage api', () => {
 	});
 
 	describe('storage', () => {
+		it('should return null when sending invalid lti subject', () => {
+			const putEvent = {
+				data: {
+					subject: 'orggg.imsglobal.lti.put_data',
+					message_id: '123456',
+					key: 'my_key',
+					value: 'my_data'
+				},
+				origin: 'http://example.com'
+			};
+
+			const putResponse = api.processLtiPostMessage(putEvent);
+			expect(putResponse).eqls(null);
+		});
+
+		it('should return unsupported_subject error when sending invalid subject', () => {
+			const putEvent = {
+				data: {
+					subject: 'org.imsglobal.lti.put_dataaa',
+					message_id: '123456',
+					key: 'my_key',
+					value: 'my_data'
+				},
+				origin: 'http://example.com'
+			};
+
+			const putResponse = api.processLtiPostMessage(putEvent);
+			expect(putResponse).eqls({
+				subject: 'org.imsglobal.lti.put_dataaa.response',
+				message_id: '123456',
+				error: {
+					code: 'unsupported_subject',
+					message: 'org.imsglobal.lti.put_dataaa is not a supported capability subject'
+				}
+			});
+		});
+
+		it('should return bad_request error when sending no messageId', () => {
+			const putEvent = {
+				data: {
+					subject: 'org.imsglobal.lti.put_data',
+					key: 'my_key',
+					value: 'my_data'
+				},
+				origin: 'http://example.com'
+			};
+
+			const putResponse = api.processLtiPostMessage(putEvent);
+			expect(putResponse).eqls({
+				error: {
+					code: 'bad_request',
+					message: 'There is no message_id within event.data being sent'
+				}
+			});
+		});
+
 		it('should store and retrieve data', () => {
 			const putEvent = {
 				data: {
@@ -149,8 +205,7 @@ describe('lti postmessage api', () => {
 			expect(putResponse).eqls({
 				subject: 'org.imsglobal.lti.put_data.response',
 				message_id: '2',
-				key: 'my_key',
-				value: undefined
+				key: 'my_key'
 			});
 		});
 
@@ -179,8 +234,7 @@ describe('lti postmessage api', () => {
 			expect(putResponse).eqls({
 				subject: 'org.imsglobal.lti.put_data.response',
 				message_id: '2',
-				key: 'my_key',
-				value: null
+				key: 'my_key'
 			});
 		});
 
@@ -314,7 +368,7 @@ describe('lti postmessage api', () => {
 			});
 		});
 
-		it('should return storage_exhaustion when storing entry while over storage limit', () => {
+		it('should return exceeded storage error code when storing entry while over storage limit', () => {
 			let putEvent = {
 				data: {
 					subject: 'org.imsglobal.lti.put_data',
@@ -341,7 +395,7 @@ describe('lti postmessage api', () => {
 				message_id: '2',
 				error: {
 					code: 'storage_exhaustion',
-					message: 'Reached storage limit.'
+					message: 'For specified origin the combination of key/value pairs have reached or exceeded storage limit of 4096 bytes. Current Key count: 1, Current Byte count: 5006'
 				}
 			});
 		});
@@ -376,7 +430,7 @@ describe('lti postmessage api', () => {
 			});
 		});
 
-		it('should return storage_exhaustion when replacing data with bigger data while over storage limit', () => {
+		it('should return exceeded storage error code when replacing data with bigger data while over storage limit', () => {
 			let putEvent = {
 				data: {
 					subject: 'org.imsglobal.lti.put_data',
@@ -403,7 +457,7 @@ describe('lti postmessage api', () => {
 				message_id: '2',
 				error: {
 					code: 'storage_exhaustion',
-					message: 'Reached storage limit.'
+					message: 'For specified origin the combination of key/value pairs have reached or exceeded storage limit of 4096 bytes. Current Key count: 1, Current Byte count: 5006'
 				}
 			});
 		});

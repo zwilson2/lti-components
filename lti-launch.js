@@ -50,6 +50,8 @@ class LtiLaunch extends LitElement {
 
 		if (window === window.top && this.insidePage) {
 			window.location.href = this._launchUrl;
+		} else {
+			this._addStorageSignal();
 		}
 
 		this._handleMessage = this._handleMessage.bind(this);
@@ -67,6 +69,21 @@ class LtiLaunch extends LitElement {
 		<iframe id="lti-launch-id" data-test-id="lti-launch-frame" class="${classMap(iFrameClasses)}" allow="microphone *; camera *; autoplay *; display-capture *"
 		width="${ifDefined(this.iFrameWidth)}px" height="${this.iFrameHeight}px" src="${this._launchUrl}" title="${this._getTitle()}"></iframe>
 </div>`;
+	}
+
+	_addStorageSignal() {
+		if (this._launchUrl) {
+			const newLaunchUrl = this._launchUrl;
+			const arr = newLaunchUrl.split('?');
+			const hasQuestionMark = arr.length > 1;
+
+			const signal = 'signalStorage=true';
+			if (!hasQuestionMark) {
+				this._launchUrl += `?${signal}`;
+			} else {
+				this._launchUrl += `&${signal}`;
+			}
+		}
 	}
 
 	_getTitle() {
