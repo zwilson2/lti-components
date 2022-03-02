@@ -121,7 +121,7 @@ export class LtiPostmessageApi {
 			return {
 				error: {
 					code: 'storage_exhaustion',
-					message: `For specified origin the combination of key/value pairs have reached or exceeded storage limit of ${this._ltiStorage._sizeLimit} bytes. The number of keys are ${Object.keys(this._ltiStorage.getStore(event.origin)).length} and the number of bytes used are ${this._ltiStorage._storeSize(this._ltiStorage.getStore(event.origin))}`
+					message: `For specified origin the combination of key/value pairs have reached or exceeded storage limit of ${this._ltiStorage._sizeLimit} bytes. Current Key count: ${Object.keys(this._ltiStorage.getStore(event.origin)).length}, Current Byte count: ${this._ltiStorage._storeSize(this._ltiStorage.getStore(event.origin))}`
 				}
 			};
 		}
