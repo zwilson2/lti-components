@@ -1,7 +1,5 @@
 # LTI Components
 
-[![NPM version](https://img.shields.io/npm/v/@brightspace-ui/lti-iframe.svg)](https://www.npmjs.org/package/@brightspace-ui/lti-iframe)
-
 Contains the LTI launch BSI component
 
 ## Installation
@@ -9,7 +7,7 @@ Contains the LTI launch BSI component
 Install from NPM:
 
 ```shell
-npm install @brightspace-ui/lti-iframe
+npm install @d2l/d2l-lti-components
 ```
 
 ## Usage
@@ -131,7 +129,7 @@ npm start
 
 > TL;DR: Commits prefixed with `fix:` and `feat:` will trigger patch and minor releases when merged to `main`. Read on for more details...
 
-The [sematic-release GitHub Action](https://github.com/BrightspaceUI/actions/tree/master/semantic-release) is called from the `release.yml` GitHub Action workflow to handle version changes and releasing.
+The [semantic-release GitHub Action](https://github.com/BrightspaceUI/actions/tree/master/semantic-release) is called from the `release.yml` GitHub Action workflow to handle version changes and releasing.
 
 ### Version Changes
 
@@ -154,7 +152,7 @@ When a release is triggered, it will:
 * Update the version in `package.json`
 * Tag the commit
 * Create a GitHub release (including release notes)
-* Deploy a new package to NPM
+* Deploy a new package to CodeArtifact
 
 ### Releasing from Maintenance Branches
 

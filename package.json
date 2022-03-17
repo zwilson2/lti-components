@@ -1,5 +1,5 @@
 {
-  "name": "d2l-lti-components",
+  "name": "@d2l/d2l-lti-components",
   "description": "A generic LTI launch component",
   "repository": "https://github.com/Brightspace/lti-components.git",
   "scripts": {
@@ -39,7 +39,7 @@
     "/lang"
   ],
   "publishConfig": {
-    "access": "public"
+    "registry": "https://d2l-569998014834.d.codeartifact.us-east-1.amazonaws.com/npm/private/"
   },
   "dependencies": {
     "@brightspace-ui/core": "^1",
