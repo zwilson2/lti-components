@@ -34,7 +34,7 @@ describe('d2l-lti-launch', () => {
 
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('id')).equals(iframeId);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('data-test-id')).equals(iframeTestId);
-			expect(element.shadowRoot.querySelector('iframe').getAttribute('class')).equals(iframeClass);
+			expect(element.shadowRoot.querySelector('iframe').getAttribute('class').trim()).equals(iframeClass);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('src')).equals(`${launchUrl}?signalStorage=true`);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('title')).equals(`${iframeTitle}?signalStorage=true`);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('height')).equals(iframeHeight);
@@ -46,7 +46,7 @@ describe('d2l-lti-launch', () => {
 
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('id')).equals(iframeId);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('data-test-id')).equals(iframeTestId);
-			expect(element.shadowRoot.querySelector('iframe').getAttribute('class')).equals(iframeClassNoWidth);
+			expect(element.shadowRoot.querySelector('iframe').getAttribute('class').trim()).equals(iframeClassNoWidth);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('src')).equals(`${launchUrl}?signalStorage=true`);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('title')).equals(`${iframeTitle}?signalStorage=true`);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('height')).equals(iframeHeight);
@@ -60,7 +60,7 @@ describe('d2l-lti-launch', () => {
 
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('id')).equals(iframeId);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('data-test-id')).equals(iframeTestId);
-			expect(element.shadowRoot.querySelector('iframe').getAttribute('class')).equals(iframeClass);
+			expect(element.shadowRoot.querySelector('iframe').getAttribute('class').trim()).equals(iframeClass);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('src')).equals(`${queryLaunchUrl}&signalStorage=true`);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('title')).equals(`${queryIFrameTitle}&signalStorage=true`);
 			expect(element.shadowRoot.querySelector('iframe').getAttribute('height')).equals(iframeHeight);
