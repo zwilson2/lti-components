@@ -48,7 +48,9 @@ class LtiLaunch extends LitElement {
 	connectedCallback() {
 		super.connectedCallback();
 
-		if (window === window.top && this.insidePage) {
+		this._redirect = window === window.top && this.insidePage;
+
+		if (this._redirect) {
 			window.location.href = this._launchUrl;
 		} else {
 			this._addStorageSignal();
@@ -64,6 +66,10 @@ class LtiLaunch extends LitElement {
 	}
 
 	render() {
+		if (this._redirect) {
+			return;
+		}
+
 		const iFrameClasses = { 'd2l-content-frame-default-width': !this.iFrameWidth, 'no-border': true };
 		return html`<div>
 		<iframe id="lti-launch-id" data-test-id="lti-launch-frame" class="${classMap(iFrameClasses)}" allow="microphone *; camera *; autoplay *; display-capture *"
