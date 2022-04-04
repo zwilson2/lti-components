@@ -43,6 +43,7 @@ class LtiLaunch extends LitElement {
 		this.iFrameHeight = 600;
 		this.insidePage = false;
 		this._ltiPostmessageApi = new LtiPostmessageApi(ltiStorageLimitFlag());
+		this._redirect = false;
 	}
 
 	connectedCallback() {
